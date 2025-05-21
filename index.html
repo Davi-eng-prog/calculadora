@@ -285,8 +285,9 @@ if (preco > 79) {
 function compartilharWhatsApp() {
   const s = window.simulacao;
   if (!s) return;
+  const plataformaNome = { mercado_livre: "Mercado Livre", shopee: "Shopee", amazon: "Amazon" }[s.plataforma || "mercado_livre"];
   const msg =
-    "*Simulação Venda:*\n" +
+    "*Simulação Venda (" + plataformaNome + "):*\n" +
     "• Custo do Produto: *R$ " + s.custo.toFixed(2) + "*\n" +
     "• Embalagem: *R$ " + s.embalagem.toFixed(2) + "*\n" +
     "• Comissão: *" + s.comissao.toFixed(2) + "%*\n" +
