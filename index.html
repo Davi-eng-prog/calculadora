@@ -1,0 +1,312 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Calculadora Multiplataforma</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 700px;
+      margin: auto;
+      padding: 20px;
+    }
+    label {
+      display: block;
+      margin-top: 15px;
+      font-weight: bold;
+    }
+    input, select, button {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      font-size: 16px;
+      box-sizing: border-box;
+    }
+    button {
+      margin-top: 20px;
+    }
+    .resultado {
+      background: #f4f4f4;
+      padding: 15px;
+      margin-top: 30px;
+      border-radius: 5px;
+      white-space: pre-line;
+    }
+    @media (prefers-color-scheme: dark) {
+      body { background: #121212; color: #fff; }
+      input, select, button {
+        background: #1e1e1e; color: #fff; border: 1px solid #444;
+      }
+      .resultado {
+        background: #1f1f1f; color: #fff;
+      }
+    }
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 700px;
+      margin: auto;
+      padding: 20px;
+    }
+    label {
+      display: block;
+      margin-top: 12px;
+      font-weight: bold;
+    }
+    input, select, button {
+      width: 100%;
+      padding: 10px;
+      font-size: 16px;
+      margin-top: 5px;
+    }
+    .resultado {
+      background: #f4f4f4;
+      padding: 15px;
+      margin-top: 20px;
+      border-radius: 5px;
+      white-space: pre-line;
+    }
+    @media (prefers-color-scheme: dark) {
+      body { background: #121212; color: #fff; }
+      input, select, button {
+        background: #1e1e1e; color: #fff; border: 1px solid #444;
+      }
+      .resultado {
+        background: #1f1f1f; color: #fff;
+      }
+    }
+  </style>
+</head>
+<body>
+  <h2>Calculadora de Preço - Multiplataforma</h2>
+
+  <label for="plataforma">Plataforma</label>
+  <select id="plataforma">
+    <option value="mercado_livre">Mercado Livre</option>
+    <option value="shopee">Shopee</option>
+    <option value="amazon">Amazon</option>
+  </select>
+
+  <label for="modo">Modo de cálculo</label>
+  <select id="modo">
+    <option value="margem">Lucro desejado (%)</option>
+    <option value="preco">Preço de venda (R$)</option>
+  </select>
+
+  <label for="custo">Custo do Produto (R$)</label>
+  <input type="number" id="custo" step="0.01" />
+
+  <label for="embalagem">Custo da Embalagem (R$)</label>
+  <input type="number" id="embalagem" step="0.01" />
+
+  <label for="comissao">Comissão (%)</label>
+  <input type="number" id="comissao" step="0.01" />
+
+  <label for="imposto">Imposto (%)</label>
+  <input type="number" id="imposto" step="0.01" />
+
+  <label for="peso">Peso Cúbico do Produto (kg)</label>
+  <input type="number" id="peso" step="0.01" />
+
+  <div id="margemBox">
+    <label for="lucroPercentual">Lucro desejado (%)</label>
+    <input type="number" id="lucroPercentual" step="0.01" />
+  </div>
+
+  <div id="precoBox" style="display: none;">
+    <label for="precoVenda">Preço de venda (R$)</label>
+    <input type="number" id="precoVenda" step="0.01" />
+  </div>
+
+  <button onclick="calcular()">Calcular</button>
+  <button onclick="compartilharWhatsApp()">Compartilhar via WhatsApp</button>
+
+  <div class="resultado" id="resultado"></div>
+
+<script>
+document.getElementById("modo").addEventListener("change", function () {
+  document.getElementById("margemBox").style.display = this.value === "margem" ? "block" : "none";
+  document.getElementById("precoBox").style.display = this.value === "preco" ? "block" : "none";
+});
+
+// Funções específicas por plataforma e lógica virão depois
+
+</script>
+
+<script>
+function calcularTaxaFixaML(preco) {
+  if (preco < 12.5) return 0;
+  if (preco < 29) return 6.25;
+  if (preco < 50) return 6.50;
+  if (preco < 79) return 6.75;
+  return 0;
+}
+
+function obterFreteML(preco, peso) {
+  const tabelas = [
+    { min: 200, fretes: [[0.3, 19.95],[0.5, 21.45],[1, 22.45],[2, 23.45],[3, 24.95],[4, 26.95],[5, 28.45],
+      [9, 44.45],[13, 65.95],[17, 73.45],[23, 85.95],[30, 98.95],[40, 101.95],[50, 105.45],
+      [60, 112.45],[70, 120.45],[80, 125.95],[90, 139.95],[100, 159.95],[125, 178.95],[150, 189.95],[Infinity, 249.45]] },
+    { min: 150, fretes: [[0.3, 17.96],[0.5, 19.31],[1, 20.21],[2, 21.11],[3, 22.46],[4, 24.26],[5, 25.61],
+      [9, 40.01],[13, 59.36],[17, 66.11],[23, 77.36],[30, 89.06],[40, 91.76],[50, 94.91],
+      [60, 101.21],[70, 108.41],[80, 113.36],[90, 125.96],[100, 143.96],[125, 161.06],[150, 170.96],[Infinity, 224.51]] },
+    { min: 120, fretes: [[0.3, 15.96],[0.5, 17.16],[1, 17.96],[2, 18.76],[3, 19.96],[4, 21.56],[5, 22.76],
+      [9, 35.56],[13, 52.76],[17, 58.76],[23, 68.76],[30, 79.16],[40, 81.56],[50, 84.36],
+      [60, 89.96],[70, 96.36],[80, 100.76],[90, 111.96],[100, 127.96],[125, 143.16],[150, 151.96],[Infinity, 199.56]] },
+    { min: 100, fretes: [[0.3, 13.97],[0.5, 15.02],[1, 15.72],[2, 16.42],[3, 17.47],[4, 18.87],[5, 19.92],
+      [9, 31.12],[13, 46.17],[17, 51.42],[23, 60.17],[30, 69.27],[40, 71.37],[50, 73.82],
+      [60, 78.72],[70, 84.32],[80, 88.17],[90, 97.97],[100, 111.97],[125, 125.27],[150, 132.97],[Infinity, 174.62]] },
+    { min: 79, fretes: [[0.3, 11.97],[0.5, 12.87],[1, 13.47],[2, 14.07],[3, 14.97],[4, 16.17],[5, 17.07],
+      [9, 26.67],[13, 39.57],[17, 44.07],[23, 51.57],[30, 59.37],[40, 61.17],[50, 63.27],
+      [60, 67.47],[70, 72.27],[80, 75.57],[90, 83.97],[100, 95.97],[125, 107.37],[150, 113.97],[Infinity, 149.67]] }
+  ];
+  for (let tab of tabelas) {
+    if (preco >= tab.min) {
+      for (let [lim, val] of tab.fretes) {
+        if (peso <= lim) return val;
+      }
+    }
+  }
+  return 0;
+}
+
+function calcular() {
+  const plataforma = document.getElementById("plataforma").value;
+  const modo = document.getElementById("modo").value;
+  const custo = parseFloat(document.getElementById("custo").value);
+  const embalagem = parseFloat(document.getElementById("embalagem").value);
+  const comissao = parseFloat(document.getElementById("comissao").value) / 100;
+  const imposto = parseFloat(document.getElementById("imposto").value) / 100;
+  const peso = parseFloat(document.getElementById("peso").value);
+  const lucroPercentual = modo === "margem" ? parseFloat(document.getElementById("lucroPercentual").value) / 100 : 0;
+  const precoVenda = modo === "preco" ? parseFloat(document.getElementById("precoVenda").value) : 0;
+
+  let preco = precoVenda, frete = 0, taxaFixa = 0;
+
+  if (modo === "margem") {
+    preco = custo + embalagem + 1;
+    for (let i = 0; i < 30; i++) {
+      taxaFixa = 0;
+      frete = 0;
+      if (plataforma === "mercado_livre") {
+        taxaFixa = calcularTaxaFixaML(preco);
+        frete = obterFreteML(preco, peso);
+      } else if (plataforma === "shopee") {
+        taxaFixa = 4;
+        frete = 0;
+      } else if (plataforma === "amazon") {
+        taxaFixa = preco <= 30 ? 4.5 : preco <= 79 ? 8.0 : 0;
+        
+frete = 0;
+if (preco > 79) {
+  if (peso <= 0.249) frete = 19.95;
+  else if (peso <= 0.499) frete = 20.45;
+  else if (peso <= 0.999) frete = 21.45;
+  else if (peso <= 1.99) frete = 22.95;
+  else if (peso <= 2.99) frete = 23.95;
+  else if (peso <= 3.99) frete = 25.95;
+  else if (peso <= 4.99) frete = 27.95;
+  else if (peso <= 5.99) frete = 36.95;
+  else if (peso <= 6.99) frete = 39.45;
+  else if (peso <= 7.99) frete = 40.45;
+  else if (peso <= 8.99) frete = 45.45;
+  else if (peso <= 9.99) frete = 59.95;
+  else frete = 59.95 + (peso - 10) * 4;
+}
+  // simplificado com base na faixa 9.99 kg
+      }
+      let novoPreco = (custo + embalagem + taxaFixa + frete) / (1 - comissao - imposto - lucroPercentual);
+      if (Math.abs(novoPreco - preco) < 0.01) break;
+      preco = novoPreco;
+    }
+  } else {
+    preco = precoVenda;
+    if (plataforma === "mercado_livre") {
+      taxaFixa = calcularTaxaFixaML(preco);
+      frete = obterFreteML(preco, peso);
+    } else if (plataforma === "shopee") {
+      taxaFixa = 4;
+      frete = 0;
+    } else if (plataforma === "amazon") {
+      taxaFixa = preco <= 30 ? 4.5 : preco <= 79 ? 8.0 : 0;
+      
+frete = 0;
+if (preco > 79) {
+  if (peso <= 0.249) frete = 19.95;
+  else if (peso <= 0.499) frete = 20.45;
+  else if (peso <= 0.999) frete = 21.45;
+  else if (peso <= 1.99) frete = 22.95;
+  else if (peso <= 2.99) frete = 23.95;
+  else if (peso <= 3.99) frete = 25.95;
+  else if (peso <= 4.99) frete = 27.95;
+  else if (peso <= 5.99) frete = 36.95;
+  else if (peso <= 6.99) frete = 39.45;
+  else if (peso <= 7.99) frete = 40.45;
+  else if (peso <= 8.99) frete = 45.45;
+  else if (peso <= 9.99) frete = 59.95;
+  else frete = 59.95 + (peso - 10) * 4;
+}
+
+    }
+  }
+
+  const comissaoValor = preco * comissao;
+  const impostoValor = preco * imposto;
+  const lucro = preco - custo - embalagem - taxaFixa - frete - comissaoValor - impostoValor;
+  const margem = (lucro / preco) * 100;
+
+  window.simulacao = {
+    custo, embalagem, comissao: comissao * 100, imposto: imposto * 100,
+    peso, preco, comissaoValor, impostoValor, taxaFixa, frete,
+    lucro, margem, plataforma, modo, precoVenda, lucroDesejado: lucroPercentual * 100
+  };
+
+  
+  document.getElementById("resultado").innerText =
+    "Preço de Venda Final: R$ " + preco.toFixed(2) + "\n" +
+    "Comissão: R$ " + comissaoValor.toFixed(2) + "\n" +
+    "Taxa Fixa: R$ " + taxaFixa.toFixed(2) + "\n" +
+    "Frete Envio: R$ " + frete.toFixed(2) + "\n" +
+    "Embalagem: R$ " + embalagem.toFixed(2) + "\n" +
+    "Imposto: R$ " + impostoValor.toFixed(2) + "\n" +
+    "Lucro Estimado: R$ " + lucro.toFixed(2) + "\n" +
+    "Margem Contribuição: " + margem.toFixed(2) + "%";
+
+    "Preço de Venda Final: R$ " + preco.toFixed(2) + "\n" +
+    "Comissão: R$ " + comissaoValor.toFixed(2) + "\n" +
+    "Taxa Fixa: R$ " + taxaFixa.toFixed(2) + "\n" +
+    "Frete Envio: R$ " + frete.toFixed(2) + "\n" +
+    "Embalagem: R$ " + embalagem.toFixed(2) + "\n" +
+    "Lucro Estimado: R$ " + lucro.toFixed(2) + "\n" +
+    "Margem Contribuição: " + margem.toFixed(2) + "%";
+}
+
+function compartilharWhatsApp() {
+  const s = window.simulacao;
+  if (!s) return;
+  const msg =
+    "*Simulação Venda:*\n" +
+    "• Custo do Produto: *R$ " + s.custo.toFixed(2) + "*\n" +
+    "• Embalagem: *R$ " + s.embalagem.toFixed(2) + "*\n" +
+    "• Comissão: *" + s.comissao.toFixed(2) + "%*\n" +
+    "• Imposto: *" + s.imposto.toFixed(2) + "%*\n" +
+    "• Peso cúbico: *" + s.peso.toFixed(2) + " kg*\n" +
+    (s.modo === "margem"
+      ? "• Lucro desejado: *" + s.lucroDesejado.toFixed(2) + "%*\n"
+      : "• Preço de venda definido: *R$ " + s.precoVenda.toFixed(2) + "*\n") +
+    "\n*Resultados:*\n" +
+    "• Preço de venda: *R$ " + s.preco.toFixed(2) + "*\n" +
+    "• Comissão: *R$ " + s.comissaoValor.toFixed(2) + "*\n" +
+    "• Imposto: *R$ " + s.impostoValor.toFixed(2) + "*\n" +
+    "• Frete: *R$ " + s.frete.toFixed(2) + "*\n" +
+    "• Taxa Fixa: *R$ " + s.taxaFixa.toFixed(2) + "*\n" +
+    "• Embalagem: *R$ " + s.embalagem.toFixed(2) + "*\n" +
+    "• Lucro estimado: *R$ " + s.lucro.toFixed(2) + "*\n" +
+    "• Margem: *" + s.margem.toFixed(2) + "%*";
+  window.open("https://wa.me/?text=" + encodeURIComponent(msg), "_blank");
+}
+</script>
+
+</body>
+</html>
