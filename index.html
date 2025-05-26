@@ -135,13 +135,15 @@ document.getElementById("modo").addEventListener("change", function () {
 </script>
 
 <script>
+
 function calcularTaxaFixaML(preco) {
-  if (preco < 12.5) return 0;
+  if (preco < 12.5) return preco * 0.5;
   if (preco < 29) return 6.25;
   if (preco < 50) return 6.50;
   if (preco < 79) return 6.75;
   return 0;
 }
+
 
 function obterFreteML(preco, peso) {
   const tabelas = [
